@@ -4,7 +4,10 @@
   "type": "module",
   "version": "0.0.6",
   "license": "MIT",
-  "bin": "bin/index.js",
+  "bin": {
+    "meetup-collector": "bin/index.js",
+    "muc": "bin/index.js"
+  },
   "main": "bin/index.js",
   "files": [
     "bin"
