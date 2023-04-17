@@ -6,12 +6,13 @@ import { storeEvents } from './store-mdx.js';
 
 // read environment variables
 const {
-  USERNAME,
-  PASSWORD,
-  BASE_URL = 'https://www.meetup.com/',
+  MEETUP_USERNAME,
+  MEETUP_PASSWORD,
+  MEETUP_BASE_URL = 'https://www.meetup.com/',
+  MEETUP_GROUP_SLUG = 'dresdenjs-io-javascript-user-group',
 } = process.env;
 
-if (!USERNAME || !PASSWORD) {
+if (!MEETUP_USERNAME || !MEETUP_PASSWORD) {
   console.error('Missing credentials');
   process.exit(1);
 }
@@ -29,16 +30,26 @@ const { target = './dist', limitPast = '20', limitUpcoming = '3' } = values;
 // setup browser and context
 const browser = await chromium.launch();
 const context = await browser.newContext({
-  baseURL: BASE_URL,
+  baseURL: MEETUP_BASE_URL,
 });
 await context.route('**.jpg', (route) => route.abort());
 
 // login first
-await login(context, USERNAME, PASSWORD);
+await login(context, MEETUP_USERNAME, MEETUP_PASSWORD);
 
 // gather upcoming and past events
-const upcoming = await readEvents(context, 'upcoming', Number(limitUpcoming));
-const past = await readEvents(context, 'past', Number(limitPast));
+const upcoming = await readEvents(
+  context,
+  MEETUP_GROUP_SLUG,
+  'upcoming',
+  Number(limitUpcoming)
+);
+const past = await readEvents(
+  context,
+  MEETUP_GROUP_SLUG,
+  'past',
+  Number(limitPast)
+);
 
 // save to markdown files
 await storeEvents([...upcoming, ...past], target);

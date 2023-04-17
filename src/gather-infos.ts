@@ -2,11 +2,12 @@ import type { BrowserContext } from 'playwright-chromium';
 
 export async function readEvents(
   context: BrowserContext,
+  group: string,
   type: 'upcoming' | 'past',
   limit?: number
 ): Promise<EventData[]> {
   const page = await context.newPage();
-  await page.goto(`/dresdenjs-io-javascript-user-group/events/${type}/`);
+  await page.goto(`/${group}/events/${type}/`);
   let items = await page.locator('ul.eventList-list li.list-item').all();
 
   if (limit !== undefined && limit < items.length) {
