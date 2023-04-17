@@ -2,7 +2,7 @@
   "name": "@dresdenjs/meetup-collector",
   "description": "Gather all published meetups in markdown to be consumed by our website",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "bin": "bin/index.js",
   "main": "bin/index.js",
