@@ -12,6 +12,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18.16.0
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@dresdenjs'
       - run: npm ci
       - run: npm run build
       - run: |
@@ -21,3 +23,4 @@ jobs:
         run: npx release-it --ci
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
