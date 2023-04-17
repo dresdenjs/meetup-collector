@@ -1,3 +1,5 @@
+#!/usr/bin/env -S node --experimental-module
+
 import { parseArgs } from 'node:util';
 import { chromium } from 'playwright-chromium';
 import { readEvents } from './gather-infos.js';
