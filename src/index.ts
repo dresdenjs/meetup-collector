@@ -6,13 +6,19 @@ import { storeEvents } from './store-mdx.js';
 
 // read environment variables
 const {
-  MEETUP_USERNAME,
-  MEETUP_PASSWORD,
-  MEETUP_BASE_URL = 'https://www.meetup.com/',
-  MEETUP_GROUP_SLUG = 'dresdenjs-io-javascript-user-group',
+  // credentials must be set as env vars
+  USERNAME,
+  PASSWORD,
+
+  // convenience variables, can be set as args as well
+  BASE_URL = 'https://www.meetup.com/',
+  GROUP_SLUG = 'dresdenjs-io-javascript-user-group',
+  LIMIT_PAST = '20',
+  LIMIT_UPCOMING = '3',
+  TARGET = './dist',
 } = process.env;
 
-if (!MEETUP_USERNAME || !MEETUP_PASSWORD) {
+if (!USERNAME || !PASSWORD) {
   console.error('Missing credentials');
   process.exit(1);
 }
@@ -20,36 +26,39 @@ if (!MEETUP_USERNAME || !MEETUP_PASSWORD) {
 // read program arguments
 const { values } = parseArgs({
   options: {
-    target: { type: 'string', alias: 't', default: './dist' },
-    limitPast: { type: 'string', alias: 'p', default: '20' },
-    limitUpcoming: { type: 'string', alias: 'u', default: '3' },
+    baseUrl: { type: 'string', alias: 'b', default: BASE_URL },
+    groupSlug: { type: 'string', alias: 'g', default: GROUP_SLUG },
+    limitPast: { type: 'string', alias: 'p', default: LIMIT_PAST },
+    limitUpcoming: { type: 'string', alias: 'u', default: LIMIT_UPCOMING },
+    target: { type: 'string', alias: 't', default: TARGET },
   },
 });
-const { target = './dist', limitPast = '20', limitUpcoming = '3' } = values;
+const {
+  baseUrl = BASE_URL,
+  groupSlug = GROUP_SLUG,
+  limitPast = LIMIT_PAST,
+  limitUpcoming = LIMIT_UPCOMING,
+  target = TARGET,
+} = values;
 
 // setup browser and context
 const browser = await chromium.launch();
 const context = await browser.newContext({
-  baseURL: MEETUP_BASE_URL,
+  baseURL: baseUrl,
 });
-await context.route('**.jpg', (route) => route.abort());
+await context.route('**.jpg*', (route) => route.abort());
 
 // login first
-await login(context, MEETUP_USERNAME, MEETUP_PASSWORD);
+await login(context, USERNAME, PASSWORD);
 
 // gather upcoming and past events
 const upcoming = await readEvents(
   context,
-  MEETUP_GROUP_SLUG,
+  groupSlug,
   'upcoming',
   Number(limitUpcoming)
 );
-const past = await readEvents(
-  context,
-  MEETUP_GROUP_SLUG,
-  'past',
-  Number(limitPast)
-);
+const past = await readEvents(context, groupSlug, 'past', Number(limitPast));
 
 // save to markdown files
 await storeEvents([...upcoming, ...past], target);
