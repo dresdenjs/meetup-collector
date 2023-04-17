@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node --experimental-module
+#!/usr/bin/env -S node --experimental-modules --no-warnings
 
 import { parseArgs } from 'node:util';
 import { chromium } from 'playwright-chromium';
