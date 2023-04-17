@@ -7,7 +7,7 @@ export async function storeEvent(
   target: string
 ): Promise<void> {
   const date = event.date.slice(0, 10);
-  const path = `${target}/${date}-meetup.mdx`;
+  const path = `${target}/${date}-meetup.md`;
   const content = `---
 date: '${event.date}'
 link: '${event.link}'
