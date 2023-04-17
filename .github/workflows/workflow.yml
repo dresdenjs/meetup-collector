@@ -1,0 +1,47 @@
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.16.0
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v3
+        if: success()
+        with:
+          name: latest
+          path: bin
+
+  release:
+    needs: build
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.16.0
+      - uses: actions/download-artifact@v3
+        with:
+          name: latest
+          path: bin
+      - run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+      - run: npm config set //registry.npmjs.org/:_authToken ${{secrets.NODE_AUTH_TOKEN}}
+      - run: |
+          npx release-it --ci \
+            --github.release \
+            --github.autoGenerate \
+            --git.commitMessage='release v${version}' \
+            --git.pushArgs=--follow-tags
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
+      - run: echo "Released to npm :rocket:" >> $GITHUB_STEP_SUMMARY

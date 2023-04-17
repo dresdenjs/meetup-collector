@@ -6,10 +6,16 @@
   "license": "MIT",
   "bin": "bin/index.js",
   "main": "bin/index.js",
+  "files": [
+    "bin"
+  ],
   "scripts": {
     "start": "ts-node ./src/index.ts",
     "dev": "dotenv-run-script start",
     "build": "tsc -p tsconfig.json"
+  },
+  "engines": {
+    "node": "^18"
   },
   "dependencies": {
     "playwright-chromium": "1.32.3"
@@ -20,22 +26,12 @@
     "ts-node": "10.9.1",
     "typescript": "5.0.4"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/dresdenjs/meetup-collector.git"
   },
-  "release-it": {
-    "git": {
-      "commitMessage": "release v${version}"
-    },
-    "github": {
-      "release": true
-    },
-    "npm": {
-      "publish": true
-    }
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }
