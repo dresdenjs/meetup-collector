@@ -72,14 +72,14 @@ const upcoming = await readEvents(
   'upcoming',
   groupSlug,
   groupName,
-  Number(limitUpcoming)
+  limitUpcoming ? Number(limitUpcoming) : undefined
 );
 const past = await readEvents(
   context,
   'past',
   groupSlug,
   groupName,
-  Number(limitPast)
+  limitPast ? Number(limitPast) : undefined
 );
 
 // save to markdown files
