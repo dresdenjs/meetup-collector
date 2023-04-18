@@ -5,8 +5,9 @@ const markdown = new NodeHtmlMarkdown();
 
 export async function readEvents(
   context: BrowserContext,
-  group: string,
   type: 'upcoming' | 'past',
+  group: string,
+  name: string,
   limit?: number
 ): Promise<EventData[]> {
   const page = await context.newPage();
