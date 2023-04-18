@@ -74,6 +74,7 @@ const upcoming = await readEvents(
   groupName,
   limitUpcoming ? Number(limitUpcoming) : undefined
 );
+console.log(`> found ${upcoming.length} upcoming events`);
 const past = await readEvents(
   context,
   'past',
@@ -81,6 +82,7 @@ const past = await readEvents(
   groupName,
   limitPast ? Number(limitPast) : undefined
 );
+console.log(`> found ${past.length} past events`);
 
 // save to markdown files
 await storeEvents([...upcoming, ...past], target);

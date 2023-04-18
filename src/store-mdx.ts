@@ -1,13 +1,15 @@
 import { existsSync } from 'node:fs';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import matter from 'gray-matter';
 
 export async function storeEvent(
   event: EventData,
   target: string
 ): Promise<void> {
   const date = event.date.slice(0, 10);
-  const path = `${target}/${date}-meetup.md`;
+  const file = `${date}-meetup.md`;
+  const path = `${target}/${file}`;
   const content = `---
 date: '${event.date}'
 link: '${event.link}'
@@ -17,6 +19,20 @@ locked: false
 ---
 ${event.description}
 `;
+  // check if we're allowed to overwrite
+  if (existsSync(path)) {
+    const content = await readFile(path);
+    const { data } = matter(content.toString());
+    if (data.locked) {
+      console.log(`> skipping ${file} because it alrady exists and is locked`);
+      return;
+    } else {
+      console.log(`> overwriting ${file} because it already exists`);
+    }
+  } else {
+    console.log(`> creating ${file}`);
+  }
+
   writeFile(path, content, { encoding: 'utf-8' });
 }
 
