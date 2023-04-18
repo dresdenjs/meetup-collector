@@ -63,6 +63,9 @@ export async function readEvents(
   name: string,
   limit?: number
 ): Promise<EventData[]> {
+  // skip if limit is zero
+  if (limit === 0) return [];
+
   // create a new page
   const page = await context.newPage();
   await page.goto(`/${group}/events/${type}`);
