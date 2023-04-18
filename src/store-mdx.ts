@@ -3,6 +3,10 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import matter from 'gray-matter';
 
+export function escapeFrontmatter(str: string): string {
+  return str.replace(/'/g, "''");
+}
+
 export async function storeEvent(
   event: EventData,
   target: string
@@ -13,8 +17,8 @@ export async function storeEvent(
   const content = `---
 date: '${event.date}'
 link: '${event.link}'
-location: '${event.location}'
-title: '${event.title}'
+location: '${escapeFrontmatter(event.location)}'
+title: '${escapeFrontmatter(event.title)}'
 locked: false
 ---
 ${event.description}
