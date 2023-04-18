@@ -2,8 +2,8 @@
 
 import { parseArgs } from 'node:util';
 import { chromium } from 'playwright-chromium';
-import { readEvents as readEventsHtml } from './browser.js';
-import { readEvents as readEventsApi } from './api.js';
+import { readEvents as readEventsHtml } from './from-browser.js';
+import { readEvents as readEventsApi } from './from-api.js';
 import { login } from './login.js';
 import { storeEvents } from './store-mdx.js';
 
