@@ -16,7 +16,7 @@ export type MeetupApiEvent = {
   utc_offset: number;
   waitlist_count: number;
   yes_rsvp_count: number;
-  venue: {
+  venue?: {
     id: number;
     name: string;
     lat: number;
@@ -92,16 +92,16 @@ export async function readEvents(
 
   // apply limits (not sure how to do this in the query)
   let events = data.responses[0].value;
-  if (data.responses[0].value.length > limit) {
-    events = events.slice(0, limit);
+  if (events.length > limit) {
+    events = events.reverse().slice(0, limit);
   }
 
   // map results
-  return events.map(({ time, description, link, name, venue }) => ({
+  return events.map(({ time, description, link, name: title, venue }) => ({
     date: new Date(time).toISOString(),
     description: markdown.translate(description),
+    location: venue ? `${venue.name}, ${venue.address_1}, ${venue.city}` : '',
     link,
-    location: `${venue.name}, ${venue.address_1}, ${venue.city}`,
-    title: name,
+    title,
   }));
 }
