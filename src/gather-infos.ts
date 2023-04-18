@@ -1,9 +1,7 @@
 import type { BrowserContext } from 'playwright-chromium';
 import { NodeHtmlMarkdown } from 'node-html-markdown';
 
-const toMarkdown = new NodeHtmlMarkdown({
-  
-});
+const markdown = new NodeHtmlMarkdown();
 
 export async function readEvents(
   context: BrowserContext,
@@ -42,7 +40,7 @@ export async function readEvents(
         .locator('main .break-words')
         .first()
         .innerHTML();
-      const description = toMarkdown.translate(details);
+      const description = markdown.translate(details);
       await detailPage.close();
 
       return { date, description, link, location, title };
