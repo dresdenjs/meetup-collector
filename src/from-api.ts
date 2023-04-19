@@ -56,16 +56,12 @@ export type MeetupApiResponse = {
   responses?: { value?: MeetupApiEvent[] }[];
 };
 
-export function prepareLocation(
-  venue?: MeetupApiEvent,
-  seperator = ', ',
-): string {
+export function prepareLocation(venue?: MeetupApiEvent['venue'], separator = ', '): string {
   if (venue === undefined) return '';
-  const location = ['name', 'address_1', 'city']
-    .reduce(
-      (acc, part) => part in venue ? acc.set(venue.part) : acc,
-      new Set<string>()
-    );
+  const location = ['name', 'address_1', 'city'].reduce(
+    (acc, part) => (part in venue ? acc.add(venue[part]) : acc),
+    new Set<string>()
+  );
   return [...location].join(separator);
 }
 
@@ -87,17 +83,13 @@ export async function readEvents(
   const slug = name.replace(/[\s\.]+/g, '-');
   const hasEnded = type === 'past' ? 'true' : 'false';
   const get = async (query: string) =>
-    page.request.get(
-      `/mu_api/urlname/events/${type}?queries=${encodeURIComponent(query)}`
-    );
+    page.request.get(`/mu_api/urlname/events/${type}?queries=${encodeURIComponent(query)}`);
 
   // do actual request
   // (endpoint:microtarget/nwp,meta:(method:get,noCache:!t),params:(group_urlname:DresdenJS-io-JavaScript-User-Group),ref:microtarget)
   // (endpoint:dresdenjs-io-javascript-user-group/events,list:(dynamicRef:list_events_dresdenjs-io-javascript-user-group_past_cancelled,merge:()),meta:(method:get),params:(desc:true,fields:'attendance_count,comment_count,event_hosts,featured_photo,plain_text_no_images_description,series,self,rsvp_rules,rsvp_sample,venue,venue_visibility,pro_network_event',has_ended:true,page:'10',scroll:'since:2022-07-15T01:00:00.000+02:00',status:'upcoming,past,cancelled'),ref:events_dresdenjs-io-javascript-user-group_past_cancelled)
   // (endpoint:dresdenjs-io-javascript-user-group/events,list:(dynamicRef:list_events_dresdenjs-io-javascript-user-group_past_cancelled,merge:()),meta:(method:get),params:(desc:true,fields:'attendance_count,comment_count,event_hosts,featured_photo,plain_text_no_images_description,series,self,rsvp_rules,rsvp_sample,venue,venue_visibility,pro_network_event',has_ended:true,page:'10',scroll:'since:2015-12-11T01:00:00.000+01:00',status:'upcoming,past,cancelled'),ref:events_dresdenjs-io-javascript-user-group_past_cancelled)
-  await get(
-    `(endpoint:microtarget/nwp,meta:(method:get,noCache:!t),params:(group_urlname:${slug}),ref:microtarget)`
-  );
+  await get(`(endpoint:microtarget/nwp,meta:(method:get,noCache:!t),params:(group_urlname:${slug}),ref:microtarget)`);
   const response = await get(
     `(endpoint:${group}/events,list:(dynamicRef:list_events_${group}_${type}_cancelled,merge:()),meta:(method:get),params:(desc:true,fields:'plain_text_no_images_description,description,venue,venue_visibility',has_ended:${hasEnded},count:2,status:'${type},cancelled'),ref:events_${group}_${type}_cancelled)`
   );
