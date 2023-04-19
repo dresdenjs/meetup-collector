@@ -56,6 +56,19 @@ export type MeetupApiResponse = {
   responses?: { value?: MeetupApiEvent[] }[];
 };
 
+export function prepareLocation(
+  venue?: MeetupApiEvent,
+  seperator = ', ',
+): string {
+  if (venue === undefined) return '';
+  const location = ['name', 'address_1', 'city']
+    .reduce(
+      (acc, part) => part in venue ? acc.set(venue.part) : acc,
+      new Set<string>()
+    );
+  return [...location].join(separator);
+}
+
 export async function readEvents(
   context: BrowserContext,
   type: 'upcoming' | 'past',
@@ -103,7 +116,7 @@ export async function readEvents(
   return events.map(({ time, description, link, name: title, venue }) => ({
     date: new Date(time).toISOString(),
     description: markdown.translate(description),
-    location: venue ? `${venue.name}, ${venue.address_1}, ${venue.city}` : '',
+    location: prepareLocation(venue),
     link,
     title,
   }));
