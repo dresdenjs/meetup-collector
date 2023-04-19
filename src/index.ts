@@ -40,7 +40,7 @@ const { values } = parseArgs({
     limitPast: { type: 'string', alias: 'p', default: LIMIT_PAST },
     limitUpcoming: { type: 'string', alias: 'u', default: LIMIT_UPCOMING },
     target: { type: 'string', alias: 't', default: TARGET },
-    api: { type: 'boolean', default: true },
+    noApi: { type: 'boolean', default: false },
   },
 });
 const {
@@ -50,7 +50,7 @@ const {
   limitPast = LIMIT_PAST,
   limitUpcoming = LIMIT_UPCOMING,
   target = TARGET,
-  api = true,
+  noApi = false,
 } = values;
 
 // setup browser and context
@@ -66,7 +66,7 @@ await context.route('**.jpg*', (route) => route.abort());
 await login(context, USERNAME, PASSWORD);
 
 // gather upcoming and past events
-const readEvents = api ? readEventsApi : readEventsHtml;
+const readEvents = noApi ? readEventsHtml : readEventsApi;
 const upcoming = await readEvents(
   context,
   'upcoming',
