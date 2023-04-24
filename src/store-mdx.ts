@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 import matter from 'gray-matter';
 
 export function sanitizeMeetupMarkdown(markdown: string): string {
-  return markdown.replace(/\\+\*/g, '*');
+  return markdown.replace(/\\+[*-_]/g, '*');
 }
 
 export function escapeFrontmatter(str: string): string {
