@@ -3,14 +3,15 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import matter from 'gray-matter';
 
+export function sanitizeMeetupMarkdown(markdown: string): string {
+  return markdown.replace(/\\+\*/g, '*');
+}
+
 export function escapeFrontmatter(str: string): string {
   return str.replace(/'/g, "''");
 }
 
-export async function storeEvent(
-  event: EventData,
-  target: string
-): Promise<void> {
+export async function storeEvent(event: EventData, target: string): Promise<void> {
   const date = event.date.slice(0, 10);
   const file = `${date}-meetup.md`;
   const path = `${target}/${file}`;
@@ -21,7 +22,7 @@ location: '${escapeFrontmatter(event.location)}'
 title: '${escapeFrontmatter(event.title)}'
 locked: false
 ---
-${event.description}
+${sanitizeMeetupMarkdown(event.description)}
 `;
   // check if we're allowed to overwrite
   if (existsSync(path)) {
@@ -40,10 +41,7 @@ ${event.description}
   writeFile(path, content, { encoding: 'utf-8' });
 }
 
-export async function storeEvents(
-  events: EventData[],
-  target: string
-): Promise<void> {
+export async function storeEvents(events: EventData[], target: string): Promise<void> {
   const basePath = resolve(process.cwd(), target);
   if (!existsSync(basePath)) {
     await mkdir(basePath, { recursive: true });
