@@ -40,7 +40,6 @@ export async function readEvents(
   context: BrowserContext,
   type: 'upcoming' | 'past',
   group: string,
-  _name: string,
   limit = 999,
 ): Promise<EventData[]> {
   // skip if limit is zero

@@ -7,8 +7,7 @@ export async function readEvents(
   context: BrowserContext,
   type: 'upcoming' | 'past',
   group: string,
-  name: string,
-  limit?: number
+  limit?: number,
 ): Promise<EventData[]> {
   const page = await context.newPage();
   await page.goto(`/${group}/events/${type}/`);

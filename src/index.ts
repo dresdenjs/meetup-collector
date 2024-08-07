@@ -16,7 +16,6 @@ const {
   // convenience variables, can be set as args as well
   BASE_URL = 'https://www.meetup.com/',
   GROUP_SLUG = 'dresdenjs-io-javascript-user-group',
-  GROUP_NAME = 'DresdenJS.io JavaScript User Group',
 
   // the file name pattern with optional placeholders from the event data
   // - {id} the event id
@@ -42,7 +41,6 @@ const { values } = parseArgs({
   options: {
     baseUrl: { type: 'string', alias: 'b', default: BASE_URL },
     groupSlug: { type: 'string', alias: 'g', default: GROUP_SLUG },
-    groupName: { type: 'string', alias: 'n', default: GROUP_NAME },
     limitPast: { type: 'string', alias: 'p', default: LIMIT_PAST },
     limitUpcoming: { type: 'string', alias: 'u', default: LIMIT_UPCOMING },
     fileName: { type: 'string', alias: 'f' },
@@ -53,7 +51,6 @@ const { values } = parseArgs({
 const {
   baseUrl = BASE_URL,
   groupSlug = GROUP_SLUG,
-  groupName = GROUP_NAME,
   limitPast = LIMIT_PAST,
   limitUpcoming = LIMIT_UPCOMING,
   fileName = FILE_NAME,
@@ -76,17 +73,11 @@ await login(context, USERNAME, PASSWORD);
 
 // gather upcoming events
 const readEvents = noApi ? readEventsHtml : readEventsApi;
-const upcoming = await readEvents(
-  context,
-  'upcoming',
-  groupSlug,
-  groupName,
-  limitUpcoming ? Number(limitUpcoming) : undefined,
-);
+const upcoming = await readEvents(context, 'upcoming', groupSlug, limitUpcoming ? Number(limitUpcoming) : undefined);
 console.log(`> found ${upcoming.length} upcoming events`);
 
 // gather past events
-const past = await readEvents(context, 'past', groupSlug, groupName, limitPast ? Number(limitPast) : undefined);
+const past = await readEvents(context, 'past', groupSlug, limitPast ? Number(limitPast) : undefined);
 console.log(`> found ${past.length} past events`);
 
 // save to markdown files
