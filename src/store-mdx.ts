@@ -11,9 +11,9 @@ export function escapeFrontmatter(str: string): string {
   return str.replace(/'/g, "''");
 }
 
-export async function storeEvent(event: EventData, target: string): Promise<void> {
-  const date = event.date.slice(0, 10);
-  const file = `${date}-meetup.md`;
+export async function storeEvent(event: EventData, target: string, name: string): Promise<void> {
+  const vars = { ...event, day: event.date.slice(0, 10) };
+  const file = name.replace(/%(\w+)%/g, (_, match) => vars[match] ?? match);
   const path = `${target}/${file}`;
   const content = `---
 date: '${event.date}'
@@ -41,10 +41,10 @@ ${sanitizeMeetupMarkdown(event.description)}
   writeFile(path, content, { encoding: 'utf-8' });
 }
 
-export async function storeEvents(events: EventData[], target: string): Promise<void> {
+export async function storeEvents(events: EventData[], target: string, name: string): Promise<void> {
   const basePath = resolve(process.cwd(), target);
   if (!existsSync(basePath)) {
     await mkdir(basePath, { recursive: true });
   }
-  await Promise.allSettled(events.map((event) => storeEvent(event, basePath)));
+  await Promise.allSettled(events.map((event) => storeEvent(event, basePath, name)));
 }

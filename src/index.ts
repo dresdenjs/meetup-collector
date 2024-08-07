@@ -18,6 +18,12 @@ const {
   GROUP_SLUG = 'dresdenjs-io-javascript-user-group',
   GROUP_NAME = 'DresdenJS.io JavaScript User Group',
 
+  // the file name pattern with optional placeholders from the event data
+  // - {id} the event id
+  // - {date} date as JSON string
+  // - {day} day as short date string
+  FILE_NAME = '%day%-meetup.md',
+
   // where to store the generated files
   TARGET = './dist',
 
@@ -39,6 +45,7 @@ const { values } = parseArgs({
     groupName: { type: 'string', alias: 'n', default: GROUP_NAME },
     limitPast: { type: 'string', alias: 'p', default: LIMIT_PAST },
     limitUpcoming: { type: 'string', alias: 'u', default: LIMIT_UPCOMING },
+    fileName: { type: 'string', alias: 'f' },
     target: { type: 'string', alias: 't', default: TARGET },
     noApi: { type: 'boolean', default: false },
   },
@@ -49,6 +56,7 @@ const {
   groupName = GROUP_NAME,
   limitPast = LIMIT_PAST,
   limitUpcoming = LIMIT_UPCOMING,
+  fileName = FILE_NAME,
   target = TARGET,
   noApi = false,
 } = values;
@@ -82,7 +90,7 @@ const past = await readEvents(context, 'past', groupSlug, groupName, limitPast ?
 console.log(`> found ${past.length} past events`);
 
 // save to markdown files
-await storeEvents([...upcoming, ...past], target);
+await storeEvents([...upcoming, ...past], target, fileName);
 
 // teardown
 await context.close();
