@@ -73,7 +73,7 @@ const upcoming = await readEvents(
   'upcoming',
   groupSlug,
   groupName,
-  limitUpcoming ? Number(limitUpcoming) : undefined
+  limitUpcoming ? Number(limitUpcoming) : undefined,
 );
 console.log(`> found ${upcoming.length} upcoming events`);
 
