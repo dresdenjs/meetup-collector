@@ -84,7 +84,7 @@ export async function readEvents(
 
   // check if response is valid
   const { data } = (await response.json()) as MeetupApiResponse;
-  if ((data.groupByUrlname?.[operationName]?.count ?? 0) === 0) return [];
+  if (!data.groupByUrlname?.[operationName]?.edges.length) return [];
 
   // map results
   return data.groupByUrlname[operationName].edges
