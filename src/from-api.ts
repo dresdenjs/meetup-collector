@@ -90,7 +90,8 @@ export async function readEvents(
   // map results
   return data.groupByUrlname[operationName].edges
     .map(({ node }) => node)
-    .map(({ dateTime, description, eventUrl: link, title, venue }) => ({
+    .map(({ id, dateTime, description, eventUrl: link, title, venue }) => ({
+      id,
       date: new Date(dateTime).toISOString(),
       description: markdown.translate(description),
       location: prepareLocation(venue),

@@ -24,27 +24,22 @@ export async function readEvents(
       const title = await heading.innerText();
 
       const href = await heading.getAttribute('href');
-      const link = new URL(href, page.url()).toString();
+      const url = new URL(href, page.url());
+      const link = `${url.origin}${url.pathname}`;
+      const id = link.split('/').pop();
 
-      const timestamp = await item
-        .locator('h3 .eventTimeDisplay time')
-        .getAttribute('datetime');
+      const timestamp = await item.locator('h3 .eventTimeDisplay time').getAttribute('datetime');
       const date = new Date(Number(timestamp)).toISOString();
 
-      const location = await item
-        .locator('.venueDisplay address p')
-        .innerText();
+      const location = await item.locator('.venueDisplay address p').innerText();
 
       const detailPage = await page.context().newPage();
       await detailPage.goto(link);
-      const details = await detailPage
-        .locator('main .break-words')
-        .first()
-        .innerHTML();
+      const details = await detailPage.locator('main .break-words').first().innerHTML();
       const description = markdown.translate(details);
       await detailPage.close();
 
-      return { date, description, link, location, title };
-    })
+      return { id, date, description, link, location, title };
+    }),
   );
 }
