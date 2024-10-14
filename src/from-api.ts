@@ -1,10 +1,7 @@
 import { inspect } from 'node:util';
 import type { BrowserContext } from 'playwright-chromium';
-import { NodeHtmlMarkdown } from 'node-html-markdown';
 
 inspect.defaultOptions.depth = null;
-
-const markdown = new NodeHtmlMarkdown();
 
 export type MeetupApiEvent = {
   id: string;
@@ -89,12 +86,14 @@ export async function readEvents(
   // map results
   return data.groupByUrlname[operationName].edges
     .map(({ node }) => node)
-    .map(({ id, dateTime, description, eventUrl: link, title, venue }) => ({
-      id,
-      date: new Date(dateTime).toISOString(),
-      description: markdown.translate(description),
-      location: prepareLocation(venue),
-      link,
-      title,
-    }));
+    .map(({ id, dateTime, description, eventUrl: link, title, venue }) => {
+      return {
+        id,
+        date: new Date(dateTime).toISOString(),
+        description: unescapeMarkdown(description),
+        location: prepareLocation(venue),
+        link,
+        title,
+      };
+    });
 }
