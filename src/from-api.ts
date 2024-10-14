@@ -32,7 +32,7 @@ export function prepareLocation(venue?: MeetupApiEvent['venue'], separator = ', 
   if (!venue) return '';
   const location = ['name', 'address', 'city'].reduce(
     (acc, part) => (part in venue ? acc.add(venue[part]) : acc),
-    new Set<string>(),
+    new Set<string>()
   );
   return [...location].join(separator);
 }
@@ -41,7 +41,7 @@ export async function readEvents(
   context: BrowserContext,
   type: 'upcoming' | 'past',
   group: string,
-  limit = 999,
+  limit = 999
 ): Promise<EventData[]> {
   // skip if limit is zero
   if (limit === 0) return [];

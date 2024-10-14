@@ -5,7 +5,7 @@ export async function readEvents(
   context: BrowserContext,
   type: 'upcoming' | 'past',
   group: string,
-  limit?: number,
+  limit?: number
 ): Promise<EventData[]> {
   const page = await context.newPage();
   await page.goto(`/${group}/events/${type}/`);
@@ -37,6 +37,6 @@ export async function readEvents(
       await detailPage.close();
 
       return { id, date, description, link, location, title };
-    }),
+    })
   );
 }
