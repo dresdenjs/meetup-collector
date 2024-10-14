@@ -24,6 +24,10 @@ export type MeetupApiResponse = {
   };
 };
 
+export function unescapeMarkdown(markdown: string): string {
+  return markdown.replace(/\\+([*-_])/g, '$1');
+}
+
 export function prepareLocation(venue?: MeetupApiEvent['venue'], separator = ', '): string {
   if (!venue) return '';
   const location = ['name', 'address', 'city'].reduce(

@@ -3,10 +3,6 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import matter from 'gray-matter';
 
-export function sanitizeMeetupMarkdown(markdown: string): string {
-  return markdown.replace(/\\+[*-_]/g, '*');
-}
-
 export function escapeFrontmatter(str: string): string {
   return str.replace(/'/g, "''");
 }
@@ -22,7 +18,7 @@ location: '${escapeFrontmatter(event.location)}'
 title: '${escapeFrontmatter(event.title)}'
 locked: false
 ---
-${sanitizeMeetupMarkdown(event.description)}
+${event.description}
 `;
   // check if we're allowed to overwrite
   if (existsSync(path)) {
