@@ -1,5 +1,5 @@
 import { inspect } from 'node:util';
-import type { BrowserContext } from 'playwright-chromium';
+import type { Page } from 'playwright-chromium';
 
 inspect.defaultOptions.depth = null;
 
@@ -38,7 +38,7 @@ export function prepareLocation(venue?: MeetupApiEvent['venue'], separator = ', 
 }
 
 export async function readEvents(
-  context: BrowserContext,
+  page: Page,
   type: 'upcoming' | 'past',
   group: string,
   limit = 999
@@ -46,8 +46,7 @@ export async function readEvents(
   // skip if limit is zero
   if (limit === 0) return [];
 
-  // create a new page
-  const page = await context.newPage();
+  // navigate to the events page
   await page.goto(`/${group}/events/${type}`);
 
   // prepare api request function

@@ -1,13 +1,12 @@
-import type { BrowserContext } from 'playwright-chromium';
+import type { Page } from 'playwright-chromium';
 import { NodeHtmlMarkdown } from 'node-html-markdown';
 
 export async function readEvents(
-  context: BrowserContext,
+  page: Page,
   type: 'upcoming' | 'past',
   group: string,
   limit?: number
 ): Promise<EventData[]> {
-  const page = await context.newPage();
   await page.goto(`/${group}/events/${type}/`);
   let items = await page.locator('ul.eventList-list li.list-item').all();
 
