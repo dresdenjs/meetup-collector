@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "module": "ESNext",
+    "module": "nodenext",
     "moduleResolution": "nodenext",
     "outDir": "bin",
     "target": "ES2020"
