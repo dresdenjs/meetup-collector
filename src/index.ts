@@ -77,7 +77,7 @@ const viewport = { height, width };
 
 // setup browser and context
 chromium.use(StealthPlugin());
-const browser = await chromium.launch({ headless: false });
+const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ baseURL, userAgent, viewport });
 
 // abort image requests
