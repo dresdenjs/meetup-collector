@@ -6,8 +6,8 @@ export async function login(page: Page, username: string, password: string): Pro
   await page.waitForTimeout(2000);
 
   // agree to cookie policy
-  await page.locator('#onetrust-accept-btn-handler').click();
-  await page.waitForTimeout(1000);
+  // await page.locator('#onetrust-accept-btn-handler').click();
+  // await page.waitForTimeout(1000);
 
   // login and wait for the home page to load
   await page.getByTestId('email').fill(username);
