@@ -8,7 +8,7 @@ import { readEvents as readEventsHtml } from './from-browser.js';
 import { readEvents as readEventsApi } from './from-api.js';
 import { login } from './login.js';
 import { storeEvents } from './store-mdx.js';
-import { pickNumber, pickRandom } from './randomize.utils.js';
+import { pickNumber, pickRandom } from './utils/randomize.utils.js';
 
 // read environment variables
 const {
