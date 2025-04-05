@@ -7,7 +7,7 @@ export async function readEvents(
   group: string,
   limit?: number
 ): Promise<EventData[]> {
-  await page.goto(`/${group}/events/${type}/`);
+  await page.goto(`/${group}/events/?type=${type}`);
   let items = await page.locator('ul.eventList-list li.list-item').all();
 
   if (limit !== undefined && limit < items.length) {
