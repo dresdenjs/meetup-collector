@@ -1,19 +1,20 @@
 import type { Page } from 'playwright-chromium';
+import { pickNumber } from './utils/randomize.utils.js';
 
 export async function login(page: Page, username: string, password: string): Promise<void> {
   // open login page
   await page.goto('/login/');
-  await page.waitForTimeout(2000);
 
   // agree to cookie policy
   // await page.locator('#onetrust-accept-btn-handler').click();
   // await page.waitForTimeout(1000);
 
   // login and wait for the home page to load
+  await page.waitForTimeout(pickNumber(1000, 2000));
   await page.getByTestId('email').fill(username);
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(pickNumber(500, 1500));
   await page.getByTestId('current-password').fill(password);
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(pickNumber(1000, 2000));
 
   // check for recaptcha
   try {
