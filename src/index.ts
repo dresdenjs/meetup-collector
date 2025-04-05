@@ -86,6 +86,11 @@ const viewport = { height, width };
 chromium.use(StealthPlugin());
 const browser = await chromium.launch({
   headless: !debug,
+  args: [
+    '--disable-site-isolation-trials',
+    '--disable-features=site-per-process,SitePerProcess',
+    '--disable-blink-features=AutomationControlled',
+  ],
 });
 const context = await browser.newContext({ baseURL, userAgent, viewport });
 

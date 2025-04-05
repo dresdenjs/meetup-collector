@@ -1,5 +1,6 @@
 import type { Page } from 'playwright-chromium';
 import { pickNumber } from './utils/randomize.utils.js';
+import { solveCaptcha } from './utils/captcha.utils.js';
 
 export async function login(page: Page, username: string, password: string): Promise<void> {
   // open login page
@@ -24,8 +25,8 @@ export async function login(page: Page, username: string, password: string): Pro
     await checkbox.click({ force: true });
     await recaptcha.locator('.recaptcha-checkbox-checkmark').waitFor({ timeout: 3000 });
 
-    console.info('Recaptcha found, aborting');
-    throw new Error('Recaptcha found');
+    console.info('Recaptcha found, trying to solve it...');
+    await solveCaptcha(page);
   } catch (error) {}
 
   // submit the login form and wait for redirect
