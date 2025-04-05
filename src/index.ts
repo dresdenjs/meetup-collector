@@ -16,8 +16,11 @@ const {
   USERNAME,
   PASSWORD,
 
+  // browse headed
+  DEBUG = undefined,
   // scrape html instead of using api
   NO_API = undefined,
+
   // convenience variables, can be set as args as well
   BASE_URL = 'https://www.meetup.com/',
   GROUP_SLUG = 'dresdenjs-io-javascript-user-group',
@@ -45,6 +48,7 @@ if (!USERNAME || !PASSWORD) {
 const { values } = parseArgs({
   options: {
     baseURL: { type: 'string', alias: 'b', default: BASE_URL },
+    debug: { type: 'boolean', default: !!DEBUG },
     groupSlug: { type: 'string', alias: 'g', default: GROUP_SLUG },
     limitPast: { type: 'string', alias: 'p', default: LIMIT_PAST },
     limitUpcoming: { type: 'string', alias: 'u', default: LIMIT_UPCOMING },
@@ -56,6 +60,7 @@ const { values } = parseArgs({
 
 const {
   baseURL = BASE_URL,
+  debug = !!DEBUG,
   groupSlug = GROUP_SLUG,
   limitPast = LIMIT_PAST,
   limitUpcoming = LIMIT_UPCOMING,
@@ -79,7 +84,9 @@ const viewport = { height, width };
 
 // setup browser and context
 chromium.use(StealthPlugin());
-const browser = await chromium.launch({ headless: true });
+const browser = await chromium.launch({
+  headless: !debug,
+});
 const context = await browser.newContext({ baseURL, userAgent, viewport });
 
 // abort image requests
