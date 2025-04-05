@@ -16,6 +16,8 @@ const {
   USERNAME,
   PASSWORD,
 
+  // scrape html instead of using api
+  NO_API = undefined,
   // convenience variables, can be set as args as well
   BASE_URL = 'https://www.meetup.com/',
   GROUP_SLUG = 'dresdenjs-io-javascript-user-group',
@@ -48,7 +50,7 @@ const { values } = parseArgs({
     limitUpcoming: { type: 'string', alias: 'u', default: LIMIT_UPCOMING },
     fileName: { type: 'string', alias: 'f', default: FILE_NAME },
     target: { type: 'string', alias: 't', default: TARGET },
-    noApi: { type: 'boolean', default: false },
+    noApi: { type: 'boolean', default: !!NO_API },
   },
 });
 
@@ -59,7 +61,7 @@ const {
   limitUpcoming = LIMIT_UPCOMING,
   fileName = FILE_NAME,
   target = TARGET,
-  noApi = false,
+  noApi = !!NO_API,
 } = values;
 
 // randomize some values
