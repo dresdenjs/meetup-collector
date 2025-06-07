@@ -5,19 +5,13 @@ import { chromium } from 'patchright';
 
 import { readEvents as readEventsHtml } from './from-browser.js';
 import { readEvents as readEventsApi } from './from-api.js';
-import { login } from './login.js';
 import { storeEvents } from './store-mdx.js';
-import { pickNumber, pickRandom } from './utils/randomize.utils.js';
 
 // read environment variables
 const {
-  // credentials must be set as env vars
-  USERNAME,
-  PASSWORD,
-
   // browse headed
   DEBUG = undefined,
-  // scrape html instead of using api
+  // deprecated - scrape html instead of using api
   NO_API = undefined,
 
   // convenience variables, can be set as args as well
@@ -37,11 +31,6 @@ const {
   LIMIT_PAST,
   LIMIT_UPCOMING,
 } = process.env;
-
-if (!USERNAME || !PASSWORD) {
-  console.error('Missing credentials');
-  process.exit(1);
-}
 
 // read program arguments
 const { values } = parseArgs({
@@ -87,9 +76,6 @@ const context = await browser.newContext({ baseURL });
 // abort image requests
 await context.route('**.jpg*', (route) => route.abort());
 
-
-// login first
-await login(page, USERNAME, PASSWORD);
 // gather upcoming events
 const page = await context.newPage();
 const readEvents = noApi ? readEventsHtml : readEventsApi;
