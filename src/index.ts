@@ -22,7 +22,7 @@ const {
 
   // convenience variables, can be set as args as well
   BASE_URL = 'https://www.meetup.com/',
-  GROUP_SLUG = 'dresdenjs-io-javascript-user-group',
+  GROUP_SLUG = undefined,
 
   // the file name pattern with optional placeholders from the event data
   // - {id} the event id
@@ -57,52 +57,41 @@ const { values } = parseArgs({
   },
 });
 
+// check required variables
+if (!GROUP_SLUG) {
+  console.error('Error: GROUP_SLUG is not set. Please provide the slug of the Meetup group.');
+  process.exit(1);
+}
+
+// deprecated non-api usage
+if (NO_API) {
+  console.warn('Warning: NO_API is deprecated.');
+}
+
+// TODO: do we have to align the defaults here again, what about the defaults of `parseArgs`?
 const {
   baseURL = BASE_URL,
-  debug = !!DEBUG,
+  debug = DEBUG,
   groupSlug = GROUP_SLUG,
   limitPast = LIMIT_PAST,
   limitUpcoming = LIMIT_UPCOMING,
   fileName = FILE_NAME,
   target = TARGET,
-  noApi = !!NO_API,
+  noApi = NO_API,
 } = values;
 
-// randomize some values
-// https://scrapingant.com/blog/bypass-captcha-playwright
-const userAgents = [
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
-  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36',
-];
-const userAgent = pickRandom(userAgents);
-const hwConcurrency = pickNumber(2, 16);
-const height = pickNumber(768, 1080);
-const width = pickNumber(1024, 1920);
-const viewport = { height, width };
-
 // setup browser and context
-const browser = await chromium.launch({
-  headless: !debug,
-  args: [
-    '--disable-site-isolation-trials',
-    '--disable-features=site-per-process,SitePerProcess',
-    '--disable-blink-features=AutomationControlled',
-  ],
-});
-const context = await browser.newContext({ baseURL, userAgent, viewport });
+const browser = await chromium.launch({ headless: !debug });
+const context = await browser.newContext({ baseURL });
 
 // abort image requests
 await context.route('**.jpg*', (route) => route.abort());
 
-// set random hardware concurrency
-const page = await context.newPage();
-await page.evaluate(`Object.defineProperty(navigator, 'hardwareConcurrency', { get: () => ${hwConcurrency} })`);
 
 // login first
 await login(page, USERNAME, PASSWORD);
-
 // gather upcoming events
+const page = await context.newPage();
 const readEvents = noApi ? readEventsHtml : readEventsApi;
 const upcoming = await readEvents(page, 'upcoming', groupSlug, limitUpcoming ? Number(limitUpcoming) : undefined);
 console.log(`> found ${upcoming.length} upcoming events`);
