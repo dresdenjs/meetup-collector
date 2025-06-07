@@ -1,5 +1,5 @@
-import type { Page } from 'playwright-chromium';
 import { NodeHtmlMarkdown } from 'node-html-markdown';
+import type { Page } from 'patchright';
 
 export async function readEvents(
   page: Page,

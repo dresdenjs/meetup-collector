@@ -1,5 +1,5 @@
 import { inspect } from 'node:util';
-import type { Page } from 'playwright-chromium';
+import type { Page } from 'patchright';
 
 inspect.defaultOptions.depth = null;
 

@@ -1,8 +1,7 @@
 #!/usr/bin/env -S node --experimental-modules --no-warnings
 
 import { parseArgs } from 'node:util';
-import { chromium } from 'playwright-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import { chromium } from 'patchright';
 
 import { readEvents as readEventsHtml } from './from-browser.js';
 import { readEvents as readEventsApi } from './from-api.js';
@@ -83,7 +82,6 @@ const width = pickNumber(1024, 1920);
 const viewport = { height, width };
 
 // setup browser and context
-chromium.use(StealthPlugin());
 const browser = await chromium.launch({
   headless: !debug,
   args: [
