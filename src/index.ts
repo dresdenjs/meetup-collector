@@ -1,5 +1,6 @@
 #!/usr/bin/env -S node --experimental-modules --no-warnings
 
+import { env } from 'node:process';
 import { parseArgs } from 'node:util';
 import { chromium } from 'patchright';
 
@@ -30,44 +31,34 @@ const {
   // limit the amount of items to be collected
   LIMIT_PAST,
   LIMIT_UPCOMING,
-} = process.env;
+} = env;
 
 // read program arguments
-const { values } = parseArgs({
+const {
+  values: { baseURL, debug, groupSlug, limitPast, limitUpcoming, fileName, target, noApi },
+} = parseArgs({
   options: {
     baseURL: { type: 'string', alias: 'b', default: BASE_URL },
-    debug: { type: 'boolean', default: !!DEBUG },
+    debug: { type: 'boolean', default: Boolean(DEBUG) },
     groupSlug: { type: 'string', alias: 'g', default: GROUP_SLUG },
     limitPast: { type: 'string', alias: 'p', default: LIMIT_PAST },
     limitUpcoming: { type: 'string', alias: 'u', default: LIMIT_UPCOMING },
     fileName: { type: 'string', alias: 'f', default: FILE_NAME },
     target: { type: 'string', alias: 't', default: TARGET },
-    noApi: { type: 'boolean', default: !!NO_API },
+    noApi: { type: 'boolean', default: Boolean(NO_API) },
   },
 });
 
 // check required variables
-if (!GROUP_SLUG) {
+if (!groupSlug) {
   console.error('Error: GROUP_SLUG is not set. Please provide the slug of the Meetup group.');
   process.exit(1);
 }
 
 // deprecated non-api usage
-if (NO_API) {
+if (noApi) {
   console.warn('Warning: NO_API is deprecated.');
 }
-
-// TODO: do we have to align the defaults here again, what about the defaults of `parseArgs`?
-const {
-  baseURL = BASE_URL,
-  debug = DEBUG,
-  groupSlug = GROUP_SLUG,
-  limitPast = LIMIT_PAST,
-  limitUpcoming = LIMIT_UPCOMING,
-  fileName = FILE_NAME,
-  target = TARGET,
-  noApi = NO_API,
-} = values;
 
 // setup browser and context
 const browser = await chromium.launch({ headless: !debug });
