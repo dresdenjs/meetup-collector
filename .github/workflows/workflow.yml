@@ -20,7 +20,11 @@ jobs:
 
   release:
     needs: build
-    permissions: write-all
+    permissions:
+      # push release commit and tag, create GitHub release
+      contents: write
+      # npm trusted publishing (OIDC)
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -34,14 +38,13 @@ jobs:
       - run: |
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-      - run: npm config set //registry.npmjs.org/:_authToken ${{secrets.NODE_AUTH_TOKEN}}
       - run: |
           npx release-it --ci \
             --github.release \
             --github.autoGenerate \
             --git.commitMessage='release v${version}' \
-            --git.pushArgs=--follow-tags
+            --git.pushArgs=--follow-tags \
+            --npm.skipChecks
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
       - run: echo "Released to npm :rocket:" >> $GITHUB_STEP_SUMMARY
