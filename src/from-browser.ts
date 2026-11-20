@@ -20,9 +20,9 @@ export async function readEvents(
       const title = await heading.innerText();
 
       const href = await heading.getAttribute('href');
-      const url = new URL(href, page.url());
+      const url = new URL(href ?? '', page.url());
       const link = `${url.origin}${url.pathname}`;
-      const id = link.split('/').pop();
+      const id = link.split('/').pop() ?? '';
 
       const timestamp = await item.locator('h3 .eventTimeDisplay time').getAttribute('datetime');
       const date = new Date(Number(timestamp)).toISOString();

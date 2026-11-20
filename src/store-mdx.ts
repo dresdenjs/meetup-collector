@@ -8,7 +8,7 @@ export function escapeFrontmatter(str: string): string {
 }
 
 export async function storeEvent(event: EventData, target: string, name: string): Promise<void> {
-  const vars = { ...event, day: event.date.slice(0, 10) };
+  const vars: Record<string, string> = { ...event, day: event.date.slice(0, 10) };
   const file = name.replace(/%(\w+)%/g, (_, match) => vars[match] ?? match);
   const path = `${target}/${file}`;
   const content = `---

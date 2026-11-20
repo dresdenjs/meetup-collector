@@ -30,8 +30,8 @@ export function unescapeMarkdown(markdown: string): string {
 
 export function prepareLocation(venue?: MeetupApiEvent['venue'], separator = ', '): string {
   if (!venue) return '';
-  const location = ['name', 'address', 'city'].reduce(
-    (acc, part) => (part in venue ? acc.add(venue[part]) : acc),
+  const location = (['name', 'address', 'city'] as const).reduce(
+    (acc, part) => (venue[part] ? acc.add(venue[part]) : acc),
     new Set<string>()
   );
   return [...location].join(separator);
