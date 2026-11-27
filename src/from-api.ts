@@ -78,10 +78,15 @@ export async function readEvents(
   const payload = { query, variables: { urlname: group } };
 
   // do actual request
-  const response = await page.request.post('/gql2', { data: payload });
+  // meetup rejects requests (403, empty body) without its web client name
+  const headers = { 'apollographql-client-name': 'nextjs-web' };
+  const response = await page.request.post('/gql2', { data: payload, headers });
+  if (!response.ok()) {
+    throw new Error(`Meetup API responded with ${response.status()} ${response.statusText()}`);
+  }
 
   // check if response is valid
-  const { data } = (await response.json()) as MeetupApiResponse;
+  const { data }= (await response.json()) as MeetupApiResponse;
   if (!data?.groupByUrlname?.events?.edges.length) return [];
 
   // map results
